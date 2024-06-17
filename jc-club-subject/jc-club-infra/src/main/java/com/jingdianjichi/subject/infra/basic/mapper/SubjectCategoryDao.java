@@ -70,5 +70,10 @@ public interface SubjectCategoryDao {
      */
     int deleteById(Long id);
 
+    /**
+     * 查询岗位大类
+     * @return
+     */
+    List<SubjectCategory> queryCategory(SubjectCategory subjectCategory);
 }
 
