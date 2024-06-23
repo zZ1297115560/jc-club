@@ -11,12 +11,14 @@ import com.google.common.base.Preconditions;
 import com.jingdianjichi.subject.application.convert.SubjectCategoryDTOConverter;
 import com.jingdianjichi.subject.application.dto.SubjectCategoryDTO;
 import com.jingdianjichi.subject.common.entity.Result;
-import com.jingdianjichi.subject.domain.convert.SubjectCategoryConverter;
 import com.jingdianjichi.subject.domain.entity.SubjectCategoryBO;
 import com.jingdianjichi.subject.domain.service.SubjectCategoryDomainService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -35,6 +37,11 @@ public class SubjectCategoryController {
     @Resource
     private SubjectCategoryDomainService subjectCategoryDomainService;
 
+    /**
+     * 新增分类
+     * @param subjectCategoryDTO 分类信息
+     * @return 返回 Result对象，包括操作的成功（true）或失败（false）状态。失败时Result包含错误消息。
+     */
     @PostMapping("/add")
     public Result<Boolean> add(@RequestBody SubjectCategoryDTO subjectCategoryDTO){
         try {
@@ -55,10 +62,16 @@ public class SubjectCategoryController {
 
     }
 
+    /**
+     * 查询一级分类
+     * @param subjectCategoryDTO 查询条件
+     * @return 返回 Result对象，包括操作的成功（true）或失败（false）状态。失败时Result包含错误消息。
+     */
     @PostMapping("/queryPrimaryCategory")
-    public Result<List<SubjectCategoryDTO>> queryPrimaryCategory() {
+    public Result<List<SubjectCategoryDTO>> queryPrimaryCategory(@RequestBody SubjectCategoryDTO subjectCategoryDTO) {
         try {
-            SubjectCategoryBO subjectCategoryBO = new SubjectCategoryBO();
+            SubjectCategoryBO subjectCategoryBO = SubjectCategoryDTOConverter.INSTANCE.convertDtoToCategoryBo(subjectCategoryDTO);
+
             List<SubjectCategoryBO> subjectCategoryBOList = subjectCategoryDomainService.queryCategory(subjectCategoryBO);
             List<SubjectCategoryDTO> subjectCategoryDTOList = SubjectCategoryDTOConverter.INSTANCE.
                     convertBoToCategoryDTOList(subjectCategoryBOList);
@@ -69,6 +82,11 @@ public class SubjectCategoryController {
         }
     }
 
+    /**
+     * 查询二级分类
+     * @param subjectCategoryDTO 查询条件
+     * @return 返回 Result对象，包括操作的成功（true）或失败（false）状态。失败时Result包含错误消息。
+     */
     @PostMapping("/queryCategoryByPrimary")
     public Result<List<SubjectCategoryDTO>> queryCategoryByPrimary(@RequestBody SubjectCategoryDTO subjectCategoryDTO) {
         try {
@@ -91,7 +109,7 @@ public class SubjectCategoryController {
     /**
      * 更新分类
      * @param subjectCategoryDTO 更新条件
-     * @return
+     * @return 返回 Result对象，包括操作的成功（true）或失败（false）状态。失败时Result包含错误消息。
      */
     @PostMapping("/update")
     public Result<Boolean> update(@RequestBody SubjectCategoryDTO subjectCategoryDTO){
@@ -111,6 +129,11 @@ public class SubjectCategoryController {
     }
 
 
+    /**
+     * 删除分类
+     * @param subjectCategoryDTO 删除条件
+     * @return 返回 Result对象，包括操作的成功（true）或失败（false）状态。失败时Result包含错误消息。
+     */
     @PostMapping("/delete")
     public Result<Boolean> delete(@RequestBody SubjectCategoryDTO subjectCategoryDTO){
         try {
