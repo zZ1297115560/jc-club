@@ -25,4 +25,4 @@ replay_pid*
 
 # 自定义部分
 # rebel
-src/main/resources/rebel.xml
+rebel.xml
