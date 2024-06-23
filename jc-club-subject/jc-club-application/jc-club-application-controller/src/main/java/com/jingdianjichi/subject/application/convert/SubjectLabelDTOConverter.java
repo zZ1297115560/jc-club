@@ -11,6 +11,8 @@ import com.jingdianjichi.subject.domain.entity.SubjectLabelBO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 /**
  * 标签DTO与BO转换器
  * @author zxf
@@ -26,6 +28,13 @@ public interface SubjectLabelDTOConverter {
      * @param subjectLabelDTO 标签DTO
      * @return 标签BO
      */
-    SubjectLabelBO convertDTOToLabelBo(SubjectLabelDTO subjectLabelDTO);
+    SubjectLabelBO convertDtoToLabelBo(SubjectLabelDTO subjectLabelDTO);
+
+    /**
+     * 将标签BO转换为DTO
+     * @param subjectLabelBOList 标签BO
+     * @return 标签DTO
+     */
+    List<SubjectLabelDTO> convertBoToLabelDTO(List<SubjectLabelBO> subjectLabelBOList);
 }
 

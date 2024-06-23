@@ -27,5 +27,12 @@ public interface SubjectLabelConverter {
      * @return 标签实体
      */
     SubjectLabel convertBoToSubjectLabel(SubjectLabelBO subjectLabelBO);
+
+    /**
+     * 将标签实体转换为BO
+     * @param subjectLabel 标签实体
+     * @return
+     */
+    SubjectLabelBO convertSubjectLabelToBo(SubjectLabel subjectLabel);
 }
 

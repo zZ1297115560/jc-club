@@ -2,6 +2,8 @@ package com.jingdianjichi.subject.infra.basic.service;
 
 import com.jingdianjichi.subject.infra.basic.entity.SubjectLabel;
 
+import java.util.List;
+
 /**
  * 题目标签表(SubjectLabel)表服务接口
  *
@@ -42,4 +44,10 @@ public interface SubjectLabelService {
      */
     boolean deleteById(Long id);
 
+    /**
+     * 通过标签id批量查询标签信息
+     * @param labelIdList 标签id集合
+     * @return 标签信息集合
+     */
+    List<SubjectLabel> batchQueryByIds(List<Long> labelIdList);
 }

@@ -8,6 +8,8 @@ package com.jingdianjichi.subject.domain.service;
 
 import com.jingdianjichi.subject.domain.entity.SubjectLabelBO;
 
+import java.util.List;
+
 
 /**
  * 标签服务接口
@@ -37,6 +39,13 @@ public interface SubjectLabelDomainService {
      * @return 是否删除成功
      */
     Boolean delete(SubjectLabelBO subjectLabelBO);
+
+    /**
+     * 根据分类id查询标签
+     * @param subjectLabelBO 标签信息
+     * @return 标签列表
+     */
+    List<SubjectLabelBO> queryLabelByCategoryId(SubjectLabelBO subjectLabelBO);
 
 }
 
