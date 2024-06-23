@@ -25,4 +25,4 @@ replay_pid*
 
 # 自定义部分
 # rebel
-rebel.xml
+/jc-club-subject/jc-club-infra/src/main/resources/rebel.xml
