@@ -10,7 +10,6 @@ import com.jingdianjichi.subject.domain.entity.SubjectCategoryBO;
 import com.jingdianjichi.subject.infra.basic.entity.SubjectCategory;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-import org.w3c.dom.stylesheets.LinkStyle;
 
 import java.util.List;
 
@@ -24,8 +23,8 @@ import java.util.List;
 public interface SubjectCategoryConverter {
     SubjectCategoryConverter INSTANCE = Mappers.getMapper(SubjectCategoryConverter.class);
 
-    SubjectCategory convertBoToCategory(SubjectCategoryBO subjectCategoryBO);
+    SubjectCategory convertBoToEntity(SubjectCategoryBO subjectCategoryBO);
 
-    List<SubjectCategoryBO> convertCategoryToBo(List<SubjectCategory> subjectCategory);
+    List<SubjectCategoryBO> convertEntityToBo(List<SubjectCategory> subjectCategory);
 }
 

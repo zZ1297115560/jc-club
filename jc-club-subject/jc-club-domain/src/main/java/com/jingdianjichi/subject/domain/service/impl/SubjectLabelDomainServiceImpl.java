@@ -49,7 +49,7 @@ public class SubjectLabelDomainServiceImpl implements SubjectLabelDomainService 
         }
 
         // 2. 转换BO对象为DO对象
-        SubjectLabel subjectLabel = SubjectLabelConverter.INSTANCE.convertBoToSubjectLabel(subjectLabelBO);
+        SubjectLabel subjectLabel = SubjectLabelConverter.INSTANCE.convertBoToEntity(subjectLabelBO);
 
         // 3. 新增标签
         subjectLabel.setIsDeleted(IsDeleteFlagEnum.UN_DELETED.getCode());
@@ -68,7 +68,7 @@ public class SubjectLabelDomainServiceImpl implements SubjectLabelDomainService 
         }
 
         // 2. 转换BO对象为DO对象
-        SubjectLabel subjectLabel = SubjectLabelConverter.INSTANCE.convertBoToSubjectLabel(subjectLabelBO);
+        SubjectLabel subjectLabel = SubjectLabelConverter.INSTANCE.convertBoToEntity(subjectLabelBO);
 
         // 3. 更新标签
         int result = subjectLabelService.update(subjectLabel);
@@ -86,7 +86,7 @@ public class SubjectLabelDomainServiceImpl implements SubjectLabelDomainService 
         }
 
         // 2. 转换BO对象为DO对象
-        SubjectLabel subjectLabel = SubjectLabelConverter.INSTANCE.convertBoToSubjectLabel(subjectLabelBO);
+        SubjectLabel subjectLabel = SubjectLabelConverter.INSTANCE.convertBoToEntity(subjectLabelBO);
         subjectLabel.setIsDeleted(IsDeleteFlagEnum.DELETED.getCode());
 
         // 3. 删除标签(逻辑删除)
@@ -116,7 +116,7 @@ public class SubjectLabelDomainServiceImpl implements SubjectLabelDomainService 
         List<SubjectLabel> labelList = subjectLabelService.batchQueryByIds(labelIdList);
         LinkedList<SubjectLabelBO> subjectLabelBoList = new LinkedList<>();
         labelList.forEach(label ->{
-            SubjectLabelBO bo = SubjectLabelConverter.INSTANCE.convertSubjectLabelToBo(label);
+            SubjectLabelBO bo = SubjectLabelConverter.INSTANCE.convertEntityToBo(label);
             bo.setCategoryId(categoryId);
             subjectLabelBoList.add(bo);
         });

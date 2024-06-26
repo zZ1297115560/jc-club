@@ -12,7 +12,6 @@ import com.jingdianjichi.subject.domain.convert.SubjectCategoryConverter;
 import com.jingdianjichi.subject.domain.entity.SubjectCategoryBO;
 import com.jingdianjichi.subject.domain.service.SubjectCategoryDomainService;
 import com.jingdianjichi.subject.infra.basic.entity.SubjectCategory;
-import com.jingdianjichi.subject.infra.basic.mapper.SubjectCategoryDao;
 import com.jingdianjichi.subject.infra.basic.service.SubjectCategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,17 +37,17 @@ public class SubjectCategoryDomainServiceImpl implements SubjectCategoryDomainSe
         if (log.isInfoEnabled()){
             log.info("SubjectCategoryDomainServiceImpl.add.bo:{}", JSON.toJSONString(subjectCategoryBO));
         }
-        SubjectCategory subjectCategory = SubjectCategoryConverter.INSTANCE.convertBoToCategory(subjectCategoryBO);
+        SubjectCategory subjectCategory = SubjectCategoryConverter.INSTANCE.convertBoToEntity(subjectCategoryBO);
         subjectCategory.setIsDeleted(IsDeleteFlagEnum.UN_DELETED.getCode());
         subjectCategoryService.insert(subjectCategory);
     }
 
     @Override
     public List<SubjectCategoryBO> queryCategory(SubjectCategoryBO subjectCategoryBO) {
-        SubjectCategory subjectCategory = SubjectCategoryConverter.INSTANCE.convertBoToCategory(subjectCategoryBO);
+        SubjectCategory subjectCategory = SubjectCategoryConverter.INSTANCE.convertBoToEntity(subjectCategoryBO);
         subjectCategory.setIsDeleted(IsDeleteFlagEnum.UN_DELETED.getCode());
         List<SubjectCategory> subjectCategoryList = subjectCategoryService.queryCategory(subjectCategory);
-        List<SubjectCategoryBO> boList = SubjectCategoryConverter.INSTANCE.convertCategoryToBo(subjectCategoryList);
+        List<SubjectCategoryBO> boList = SubjectCategoryConverter.INSTANCE.convertEntityToBo(subjectCategoryList);
         if (log.isInfoEnabled()){
             log.info("SubjectCategoryDomainServiceImpl.queryPrimaryCategory.boList:{}", JSON.toJSONString(boList));
         }
@@ -57,14 +56,14 @@ public class SubjectCategoryDomainServiceImpl implements SubjectCategoryDomainSe
 
     @Override
     public Boolean update(SubjectCategoryBO subjectCategoryBO) {
-        SubjectCategory subjectCategory = SubjectCategoryConverter.INSTANCE.convertBoToCategory(subjectCategoryBO);
+        SubjectCategory subjectCategory = SubjectCategoryConverter.INSTANCE.convertBoToEntity(subjectCategoryBO);
         int result = subjectCategoryService.update(subjectCategory);
         return result > 0;
     }
 
     @Override
     public Boolean delete(SubjectCategoryBO subjectCategoryBO) {
-        SubjectCategory subjectCategory = SubjectCategoryConverter.INSTANCE.convertBoToCategory(subjectCategoryBO);
+        SubjectCategory subjectCategory = SubjectCategoryConverter.INSTANCE.convertBoToEntity(subjectCategoryBO);
         subjectCategory.setIsDeleted(IsDeleteFlagEnum.DELETED.getCode());
         int result = subjectCategoryService.update(subjectCategory);
         return result > 0;
