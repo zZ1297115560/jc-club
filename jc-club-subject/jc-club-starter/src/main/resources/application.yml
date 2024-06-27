@@ -2,11 +2,13 @@ server:
   port: 3000
 spring:
   datasource:
-    username: root
+    username: zhuxuefeng
     # password: root
-    password: AqEz8/5ejmmBiP6HEPZzkiB966TA2gFQmQAz0E4WA7S382fYBBnStU62hTU4vovBXaSPzU9HgaNqXy73SeGYLQ==
+    # local
+#    password: AqEz8/5ejmmBiP6HEPZzkiB966TA2gFQmQAz0E4WA7S382fYBBnStU62hTU4vovBXaSPzU9HgaNqXy73SeGYLQ==
+    password: Jii/oOLnArleWTgKzP6MchKpeq5F0LagydZrPhscwxB4mStiIStim1cYR8i3X8zMfqdzoinkYJ4AOYkjYQcvbA==
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/jc-club?useSSL=true&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://47.95.199.95:3306/jc-club?useSSL=true&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       initial-size: 20
@@ -33,4 +35,4 @@ logging:
 #mybatis-plus:
 #  configuration:
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-publicKey: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAI1fBzuP7y56W8nu5Dpd5MafB8ro7U3xeEoPFGYeSp4BdEFqH930NhdHhXdgcHs06mB15Pz6XYTkuQLQUUPOS68CAwEAAQ==
+publicKey: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAMDva4lPrQl8Q8WfqwdI1fyMIsg7eG8Cw1UVcqInSq9nZUQ+W/ozrrrRB/ExngA3+8mmWtEqaWyoQ1Quog793IUCAwEAAQ==

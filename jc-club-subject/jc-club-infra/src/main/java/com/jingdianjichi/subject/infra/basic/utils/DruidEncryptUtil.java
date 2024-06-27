@@ -57,7 +57,7 @@ public class DruidEncryptUtil {
     }
 
     public static void main(String[] args) {
-        String originPassword = "root";
+        String originPassword = "zZ2120410104@";
 
         String encryptPassword = encrypt(originPassword);
         System.out.println("main:"+encryptPassword);
