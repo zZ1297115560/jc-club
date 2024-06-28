@@ -84,5 +84,13 @@ public interface SubjectLabelDao {
      * @return 标签集合
      */
     List<SubjectLabel> batchQueryByIds(@Param("labelIdList")List<Long> labelIdList);
+
+    /**
+     * 根据条件查询标签
+     * @param subjectLabel 查询条件
+     * @return 标签集合
+     */
+    List<SubjectLabel> queryByCondition(SubjectLabel subjectLabel);
+
 }
 

@@ -11,6 +11,8 @@ import com.jingdianjichi.subject.infra.basic.entity.SubjectLabel;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 /**
  * 标签分类转换器
  * @author zxf
@@ -34,5 +36,12 @@ public interface SubjectLabelConverter {
      * @return
      */
     SubjectLabelBO convertEntityToBo(SubjectLabel subjectLabel);
+
+    /**
+     * 将标签实体列表转换为BO列表
+     * @param subjectLabelList 标签实体列表
+     * @return 标签BO列表
+     */
+    List<SubjectLabelBO> convertEntityListToBoList(List<SubjectLabel> subjectLabelList);
 }
 

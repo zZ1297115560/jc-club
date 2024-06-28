@@ -50,4 +50,12 @@ public interface SubjectLabelService {
      * @return 标签信息集合
      */
     List<SubjectLabel> batchQueryByIds(List<Long> labelIdList);
+
+    /**
+     * 根据条件查询标签信息
+     * @param subjectLabel 查询条件
+     * @return 标签信息集合
+     */
+    List<SubjectLabel> queryByCondition(SubjectLabel subjectLabel);
+
 }
