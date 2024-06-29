@@ -5,3 +5,6 @@ minio:
   accessKey: minioadmin
   secretKey: minioadmin
 
+spring:
+  main:
+    web-application-type: reactive
