@@ -6,7 +6,7 @@
  */
 package com.jingdianjichi.subject.domain.handler.subject;
 
-import com.jingdianjichi.subject.common.enums.IsDeleteFlagEnum;
+import com.jingdianjichi.subject.common.enums.IsDeletedFlagEnum;
 import com.jingdianjichi.subject.common.enums.SubjectInfoTypeEnum;
 import com.jingdianjichi.subject.domain.convert.BriefSubjectConverter;
 import com.jingdianjichi.subject.domain.entity.SubjectInfoBO;
@@ -38,7 +38,7 @@ public class BriefTypeHandler implements SubjectTypeHandler{
     public void add(SubjectInfoBO subjectInfoBO) {
         SubjectBrief subjectBrief = BriefSubjectConverter.INSTANCE.convertBoToEntity(subjectInfoBO);
         subjectBrief.setSubjectId(subjectInfoBO.getId());
-        subjectBrief.setIsDeleted(IsDeleteFlagEnum.UN_DELETED.getCode());
+        subjectBrief.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
         subjectBriefService.insert(subjectBrief);
     }
 
@@ -46,7 +46,7 @@ public class BriefTypeHandler implements SubjectTypeHandler{
     public SubjectOptionBO query(Integer subjectId) {
         SubjectBrief subjectBrief = new SubjectBrief();
         subjectBrief.setSubjectId(subjectId.longValue());
-        subjectBrief.setIsDeleted(IsDeleteFlagEnum.UN_DELETED.getCode());
+        subjectBrief.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
 
         SubjectBrief result = subjectBriefService.queryByCondition(subjectBrief);
         SubjectOptionBO subjectOptionBO = new SubjectOptionBO();

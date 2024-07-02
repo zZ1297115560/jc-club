@@ -6,7 +6,7 @@
  */
 package com.jingdianjichi.subject.domain.handler.subject;
 
-import com.jingdianjichi.subject.common.enums.IsDeleteFlagEnum;
+import com.jingdianjichi.subject.common.enums.IsDeletedFlagEnum;
 import com.jingdianjichi.subject.common.enums.SubjectInfoTypeEnum;
 import com.jingdianjichi.subject.domain.convert.JudgeSubjectConverter;
 import com.jingdianjichi.subject.domain.entity.SubjectAnswerBO;
@@ -40,7 +40,7 @@ public class JudgeTypeHandler implements SubjectTypeHandler{
         SubjectJudge subjectJudge = new SubjectJudge();
         SubjectAnswerBO subjectAnswerBO = subjectInfoBO.getOptionList().get(0);
         subjectJudge.setSubjectId(subjectInfoBO.getId());
-        subjectJudge.setIsDeleted(IsDeleteFlagEnum.UN_DELETED.getCode());
+        subjectJudge.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
         subjectJudge.setIsCorrect(subjectAnswerBO.getIsCorrect());
         subjectJudgeService.insert(subjectJudge);
     }
@@ -49,7 +49,7 @@ public class JudgeTypeHandler implements SubjectTypeHandler{
     public SubjectOptionBO query(Integer subjectId) {
         SubjectJudge subjectJudge = new SubjectJudge();
         subjectJudge.setSubjectId(subjectId.longValue());
-        subjectJudge.setIsDeleted(IsDeleteFlagEnum.UN_DELETED.getCode());
+        subjectJudge.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
         List<SubjectJudge> subjectJudgeList = subjectJudgeService.queryByCondition(subjectJudge);
         List<SubjectAnswerBO> subjectAnswerBoList = JudgeSubjectConverter.INSTANCE.convertEntityListToBoList(subjectJudgeList);
 

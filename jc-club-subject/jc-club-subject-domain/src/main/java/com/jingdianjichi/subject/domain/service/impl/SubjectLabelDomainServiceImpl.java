@@ -8,7 +8,7 @@ package com.jingdianjichi.subject.domain.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.jingdianjichi.subject.common.enums.CategoryTypeEnum;
-import com.jingdianjichi.subject.common.enums.IsDeleteFlagEnum;
+import com.jingdianjichi.subject.common.enums.IsDeletedFlagEnum;
 import com.jingdianjichi.subject.domain.convert.SubjectLabelConverter;
 import com.jingdianjichi.subject.domain.entity.SubjectLabelBO;
 import com.jingdianjichi.subject.domain.service.SubjectLabelDomainService;
@@ -58,7 +58,7 @@ public class SubjectLabelDomainServiceImpl implements SubjectLabelDomainService 
         SubjectLabel subjectLabel = SubjectLabelConverter.INSTANCE.convertBoToEntity(subjectLabelBO);
 
         // 3. 新增标签
-        subjectLabel.setIsDeleted(IsDeleteFlagEnum.UN_DELETED.getCode());
+        subjectLabel.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
         int result = subjectLabelService.insert(subjectLabel);
 
         // 4. 返回结果
@@ -93,7 +93,7 @@ public class SubjectLabelDomainServiceImpl implements SubjectLabelDomainService 
 
         // 2. 转换BO对象为DO对象
         SubjectLabel subjectLabel = SubjectLabelConverter.INSTANCE.convertBoToEntity(subjectLabelBO);
-        subjectLabel.setIsDeleted(IsDeleteFlagEnum.DELETED.getCode());
+        subjectLabel.setIsDeleted(IsDeletedFlagEnum.DELETED.getCode());
 
         // 3. 删除标签(逻辑删除)
         int result = subjectLabelService.update(subjectLabel);
@@ -119,7 +119,7 @@ public class SubjectLabelDomainServiceImpl implements SubjectLabelDomainService 
         // 2. 根据分类id查询标签id集合
         SubjectMapping subjectMapping = new SubjectMapping();
         subjectMapping.setSubjectId(categoryId);
-        subjectMapping.setIsDeleted(IsDeleteFlagEnum.UN_DELETED.getCode());
+        subjectMapping.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
         List<SubjectMapping> mappingList = subjectMappingService.queryLabelId(subjectMapping);
         if (CollectionUtils.isEmpty(mappingList)){
             return Collections.emptyList();

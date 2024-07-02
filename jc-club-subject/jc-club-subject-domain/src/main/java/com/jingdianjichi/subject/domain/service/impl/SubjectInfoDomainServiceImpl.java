@@ -8,7 +8,7 @@ package com.jingdianjichi.subject.domain.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.jingdianjichi.subject.common.entity.PageResult;
-import com.jingdianjichi.subject.common.enums.IsDeleteFlagEnum;
+import com.jingdianjichi.subject.common.enums.IsDeletedFlagEnum;
 import com.jingdianjichi.subject.domain.convert.SubjectInfoConverter;
 import com.jingdianjichi.subject.domain.entity.SubjectInfoBO;
 import com.jingdianjichi.subject.domain.entity.SubjectOptionBO;
@@ -64,7 +64,7 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
         SubjectInfo subjectInfo = SubjectInfoConverter.INSTANCE.convertBoToEntity(subjectInfoBO);
 
         // 3. 新增题目信息，并将新增的题目id设置到BO对象中
-        subjectInfo.setIsDeleted(IsDeleteFlagEnum.UN_DELETED.getCode());
+        subjectInfo.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
         // 3.1 新增题目信息,会返回主键id
         subjectInfoService.insert(subjectInfo);
         // 3.2 将新增的题目id设置到BO对象中
@@ -84,7 +84,7 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
                 subjectMapping.setSubjectId(subjectInfo.getId());
                 subjectMapping.setCategoryId(Long.valueOf(categoryId));
                 subjectMapping.setLabelId(Long.valueOf(labelId));
-                subjectMapping.setIsDeleted(IsDeleteFlagEnum.UN_DELETED.getCode());
+                subjectMapping.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
                 mappingList.add(subjectMapping);
             });
         });
@@ -133,7 +133,7 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
         // 查询labelName
         SubjectMapping subjectMapping = new SubjectMapping();
         subjectMapping.setSubjectId(subjectInfoBO.getId());
-        subjectMapping.setIsDeleted(IsDeleteFlagEnum.UN_DELETED.getCode());
+        subjectMapping.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
         List<SubjectMapping> mappingList = subjectMappingService.queryLabelId(subjectMapping);
         List<Long> LabelIdList = mappingList.stream().map(SubjectMapping::getLabelId).collect(Collectors.toList());
         List<SubjectLabel> subjectLabelList = subjectLabelService.batchQueryByIds(LabelIdList);

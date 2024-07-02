@@ -30,10 +30,35 @@ spring:
           enabled: true
         config:
           enabled: true
+  # redis配置
+  redis:
+    # Redis数据库索引（默认为0）
+    database: 1
+    # Redis服务器地址
+    host: 117.72.73.25
+    # Redis服务器连接端口
+    port: 6379
+    # Redis服务器连接密码（默认为空）
+    password: jichi1234
+    # 连接超时时间
+    timeout: 2s
+    lettuce:
+      pool:
+        # 连接池最大连接数
+        max-active: 200
+        # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: -1ms
+        # 连接池中的最大空闲连接
+        max-idle: 10
+        # 连接池中的最小空闲连接
+        min-idle: 0
+
 logging:
   config: classpath:log4j2-spring.xml
 publicKey: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAMDva4lPrQl8Q8WfqwdI1fyMIsg7eG8Cw1UVcqInSq9nZUQ+W/ozrrrRB/ExngA3+8mmWtEqaWyoQ1Quog793IUCAwEAAQ==
-
+rsa:
+  publicKey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDF2BOQwcXhucPw0K/0GALMkAh80gPn90IZgmvG6YIhj1STuzpOCXh57xMU7z5NwRvFcfo7dPijALryOMiIXkXIXkuPfgFcWlWk6QOAT9FgbODv8NkM+7/v9SJKougBTp8rPJsPNtzJt5ZlxjffWckyvqaZuw/8zAO/KJ00iSpjGwIDAQAB
+  privateKey: MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAMXYE5DBxeG5w/DQr/QYAsyQCHzSA+f3QhmCa8bpgiGPVJO7Ok4JeHnvExTvPk3BG8Vx+jt0+KMAuvI4yIheRcheS49+AVxaVaTpA4BP0WBs4O/w2Qz7v+/1Ikqi6AFOnys8mw823Mm3lmXGN99ZyTK+ppm7D/zMA78onTSJKmMbAgMBAAECgYBYakAUKQSt477VF+4KP9DAan3gilqEh9NaYxaXRjOJm+xIORvNVB4rH9R/PouxY+NtUYpql9OlxOXG6el0R+0W28jpscy0UT/ES71VYULshESGvmFZw1p8mHbHMgoych1yVgc/mMd7kVp6ic76LZ5x4cULt+Wx0Cj9epb1JqmGQQJBAPzZdQl/iP3mEkDGy+JBz5IMBfNLRGuA5alvwflcpLktvDAPSSFd9zWRizIJkm8P8ZrZu1ErsXiOxC9ff+1XS1cCQQDITymJFFZrtsd9o0bdpmGXe805sIkZZ4cofrixyJPtey8+8u+MzDFSEQ6RBVvXR1lVG47LW0s0dILy6K1tVc/dAkBf5rauUJIMAuxfZ0dDXMS21xqWqbCcubnh5wKCavILTl53OAT7w+EUj0xlQR4qQ7jWi8ixQ8o/OJ8OfMFPqvFnAkEAga5miJ3HGXM7EgbsMUGvewAmrIuzJuRUp43rCwZ9ZslSnCFxnyjvYV8znAXpIKXLmwL9XoCbXrlzscmbxeZBbQJAJYeE9LsauVkBKTm89nplTbjTjoP4XkW1NjGk6lcLCcTrFWZMfdEwhNhwDIM/UDSIjtz3oQt7MU9I1tQx3HooIg==
 ############## Sa-Token 配置 (文档: https://sa-token.cc) ##############
 sa-token:
   # token 名称（同时也是 cookie 名称）

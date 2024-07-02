@@ -7,7 +7,7 @@
 package com.jingdianjichi.subject.domain.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.jingdianjichi.subject.common.enums.IsDeleteFlagEnum;
+import com.jingdianjichi.subject.common.enums.IsDeletedFlagEnum;
 import com.jingdianjichi.subject.domain.convert.SubjectCategoryConverter;
 import com.jingdianjichi.subject.domain.entity.SubjectCategoryBO;
 import com.jingdianjichi.subject.domain.service.SubjectCategoryDomainService;
@@ -38,14 +38,14 @@ public class SubjectCategoryDomainServiceImpl implements SubjectCategoryDomainSe
             log.info("SubjectCategoryDomainServiceImpl.add.bo:{}", JSON.toJSONString(subjectCategoryBO));
         }
         SubjectCategory subjectCategory = SubjectCategoryConverter.INSTANCE.convertBoToEntity(subjectCategoryBO);
-        subjectCategory.setIsDeleted(IsDeleteFlagEnum.UN_DELETED.getCode());
+        subjectCategory.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
         subjectCategoryService.insert(subjectCategory);
     }
 
     @Override
     public List<SubjectCategoryBO> queryCategory(SubjectCategoryBO subjectCategoryBO) {
         SubjectCategory subjectCategory = SubjectCategoryConverter.INSTANCE.convertBoToEntity(subjectCategoryBO);
-        subjectCategory.setIsDeleted(IsDeleteFlagEnum.UN_DELETED.getCode());
+        subjectCategory.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
         List<SubjectCategory> subjectCategoryList = subjectCategoryService.queryCategory(subjectCategory);
         List<SubjectCategoryBO> boList = SubjectCategoryConverter.INSTANCE.convertEntityToBo(subjectCategoryList);
         if (log.isInfoEnabled()){
@@ -64,7 +64,7 @@ public class SubjectCategoryDomainServiceImpl implements SubjectCategoryDomainSe
     @Override
     public Boolean delete(SubjectCategoryBO subjectCategoryBO) {
         SubjectCategory subjectCategory = SubjectCategoryConverter.INSTANCE.convertBoToEntity(subjectCategoryBO);
-        subjectCategory.setIsDeleted(IsDeleteFlagEnum.DELETED.getCode());
+        subjectCategory.setIsDeleted(IsDeletedFlagEnum.DELETED.getCode());
         int result = subjectCategoryService.update(subjectCategory);
         return result > 0;
     }

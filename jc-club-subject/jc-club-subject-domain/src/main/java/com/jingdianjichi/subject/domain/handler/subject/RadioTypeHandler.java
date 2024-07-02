@@ -6,7 +6,7 @@
  */
 package com.jingdianjichi.subject.domain.handler.subject;
 
-import com.jingdianjichi.subject.common.enums.IsDeleteFlagEnum;
+import com.jingdianjichi.subject.common.enums.IsDeletedFlagEnum;
 import com.jingdianjichi.subject.common.enums.SubjectInfoTypeEnum;
 import com.jingdianjichi.subject.domain.convert.RadioSubjectConverter;
 import com.jingdianjichi.subject.domain.entity.SubjectAnswerBO;
@@ -44,7 +44,7 @@ public class RadioTypeHandler implements SubjectTypeHandler{
         subjectInfoBO.getOptionList().forEach(option->{
             SubjectRadio subjectRadio = RadioSubjectConverter.INSTANCE.convertBoToEntity(option);
             subjectRadio.setSubjectId(subjectInfoBO.getId());
-            subjectRadio.setIsDeleted(IsDeleteFlagEnum.UN_DELETED.getCode());
+            subjectRadio.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
             subjectRadioList.add(subjectRadio);
         });
         subjectRadioService.batchInsert(subjectRadioList);
@@ -54,7 +54,7 @@ public class RadioTypeHandler implements SubjectTypeHandler{
     public SubjectOptionBO query(Integer subjectId) {
         SubjectRadio subjectRadio = new SubjectRadio();
         subjectRadio.setSubjectId(subjectId.longValue());
-        subjectRadio.setIsDeleted(IsDeleteFlagEnum.UN_DELETED.getCode());
+        subjectRadio.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
         List<SubjectRadio> subjectRadioList = subjectRadioService.queryByCondition(subjectRadio);
         List<SubjectAnswerBO> subjectAnswerBoList = RadioSubjectConverter.INSTANCE.convertEntityListToBoList(subjectRadioList);
 
