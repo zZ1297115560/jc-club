@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * AuthRolePermissionDomainServiceImpl
@@ -31,16 +33,19 @@ public class AuthRolePermissionDomainServiceImpl implements AuthRolePermissionDo
 
     @Override
     public Boolean add(AuthRolePermissionBO authRolePermissionBO) {
+        List<AuthRolePermission> rolePermissionList = new LinkedList<>();
         Long roleId = authRolePermissionBO.getRoleId();
         authRolePermissionBO.getPermissionIdList().forEach(permissionId -> {
             AuthRolePermission authRolePermission = new AuthRolePermission();
             authRolePermission.setRoleId(roleId);
             authRolePermission.setPermissionId(permissionId);
             authRolePermission.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
-            authRolePermissionService.insert(authRolePermission);
+            rolePermissionList.add(authRolePermission);
         });
-        return true;
+        int count = authRolePermissionService.batchInsert(rolePermissionList);
+        return count > 0;
     }
+
 
 
 
