@@ -28,36 +28,35 @@ import reactor.core.publisher.Mono;
 @Component
 public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public Mono<Void> handle(ServerWebExchange serverWebExchange, Throwable throwable) {
         ServerHttpRequest request = serverWebExchange.getRequest();
         ServerHttpResponse response = serverWebExchange.getResponse();
         Integer code = 200;
-        String message = "成功";
+        String message = "";
         // 统一异常处理逻辑
-        if (throwable instanceof SaTokenException){
+        if (throwable instanceof SaTokenException) {
             code = 401;
-            message = "未登录/无权限";
-        }else{
+            message = "用户无权限";
+            throwable.printStackTrace();
+        } else {
             code = 500;
-            message = "系统异常";
+            message = "系统繁忙";
+            throwable.printStackTrace();
         }
-
-        Result<Object> result = Result.fail(code, message);
+        Result result = Result.fail(code, message);
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-        return response.writeWith(Mono.fromSupplier(()->{
+        return response.writeWith(Mono.fromSupplier(() -> {
             DataBufferFactory dataBufferFactory = response.bufferFactory();
-            byte[] bytes;
+            byte[] bytes = null;
             try {
                 bytes = objectMapper.writeValueAsBytes(result);
-                return dataBufferFactory.wrap(bytes);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
-            return null;
+            return dataBufferFactory.wrap(bytes);
         }));
     }
 }
-

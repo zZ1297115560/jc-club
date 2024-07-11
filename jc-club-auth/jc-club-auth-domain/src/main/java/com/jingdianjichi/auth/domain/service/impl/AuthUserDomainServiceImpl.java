@@ -7,24 +7,25 @@
 package com.jingdianjichi.auth.domain.service.impl;
 
 import cn.dev33.satoken.secure.SaSecureUtil;
+import com.google.gson.Gson;
 import com.jingdianjichi.auth.common.enums.AuthUserStatusEnum;
 import com.jingdianjichi.auth.common.enums.IsDeletedFlagEnum;
 import com.jingdianjichi.auth.domain.constants.AuthConstant;
 import com.jingdianjichi.auth.domain.convert.AuthUserBOConverter;
 import com.jingdianjichi.auth.domain.entity.AuthUserBO;
+import com.jingdianjichi.auth.domain.redis.RedisUtil;
 import com.jingdianjichi.auth.domain.service.AuthUserDomainService;
-import com.jingdianjichi.auth.infra.basic.entity.AuthRole;
-import com.jingdianjichi.auth.infra.basic.entity.AuthUser;
-import com.jingdianjichi.auth.infra.basic.entity.AuthUserRole;
-import com.jingdianjichi.auth.infra.basic.service.AuthRoleService;
-import com.jingdianjichi.auth.infra.basic.service.AuthUserRoleService;
-import com.jingdianjichi.auth.infra.basic.service.AuthUserService;
+import com.jingdianjichi.auth.infra.basic.entity.*;
+import com.jingdianjichi.auth.infra.basic.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * AuthUserDomainServiceImpl
@@ -48,6 +49,21 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
     @Value("${rsa.publicKey}")
     private String publicKey;
 
+    @Resource
+    private RedisUtil redisUtil;
+
+    private String authPermissionPrefix = "auth.permission";
+
+    private String authRolePrefix = "auth.role";
+
+
+    @Resource
+    private AuthPermissionService authPermissionService;
+
+    @Resource
+    private AuthRolePermissionService authRolePermissionService;
+
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean register(AuthUserBO authUserBO) {
@@ -68,6 +84,24 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
         authUserRole.setRoleId(roleId);
         authUserRole.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
         authUserRoleService.insert(authUserRole);
+
+        String roleKey = redisUtil.buildKey(authRolePrefix, authUser.getUserName());
+        List<AuthRole> roleList = new LinkedList<>();
+        roleList.add(authRole);
+        redisUtil.set(roleKey, new Gson().toJson(roleList));
+
+        AuthRolePermission authRolePermission = new AuthRolePermission();
+        authRolePermission.setRoleId(roleId);
+        List<AuthRolePermission> rolePermissionList = authRolePermissionService.
+                queryByCondition(authRolePermission);
+
+        List<Long> permissionIdList = rolePermissionList.stream()
+                .map(AuthRolePermission::getPermissionId).collect(Collectors.toList());
+        //根据roleId查权限
+        List<AuthPermission> permissionList = authPermissionService.queryByRoleList(permissionIdList);
+        String permissionKey = redisUtil.buildKey(authPermissionPrefix, authUser.getUserName());
+        redisUtil.set(permissionKey, new Gson().toJson(permissionList));
+
 
         return count > 0;
     }

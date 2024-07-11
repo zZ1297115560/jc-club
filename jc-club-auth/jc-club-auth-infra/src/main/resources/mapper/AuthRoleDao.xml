@@ -15,8 +15,14 @@
 
     <!--查询单个-->
     <select id="queryById" resultMap="AuthRoleMap">
-        select
-          id, role_name, role_key, created_by, created_time, update_by, update_time, is_deleted
+        select id,
+               role_name,
+               role_key,
+               created_by,
+               created_time,
+               update_by,
+               update_time,
+               is_deleted
         from auth_role
         where id = #{id}
     </select>
@@ -24,7 +30,7 @@
     <!--查询指定行数据-->
     <select id="queryAllByLimit" resultMap="AuthRoleMap">
         select
-          id, role_name, role_key, created_by, created_time, update_by, update_time, is_deleted
+            id, role_name, role_key, created_by, created_time, update_by, update_time, is_deleted
         from auth_role
         <where>
             <if test="id != null">
@@ -52,7 +58,15 @@
                 and is_deleted = #{isDeleted}
             </if>
         </where>
-        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <select id="queryByRoleList" resultMap="AuthRoleMap">
+        select *
+        from auth_role
+        where id in
+        <foreach open="(" close=")" collection="list" item="id" separator=",">
+            #{id}
+        </foreach>
     </select>
 
     <!--统计总行数-->
@@ -128,15 +142,18 @@
         insert into auth_role(role_name, role_key, created_by, created_time, update_by, update_time, is_deleted)
         values
         <foreach collection="entities" item="entity" separator=",">
-        (#{entity.roleName}, #{entity.roleKey}, #{entity.createdBy}, #{entity.createdTime}, #{entity.updateBy}, #{entity.updateTime}, #{entity.isDeleted})
+            (#{entity.roleName}, #{entity.roleKey}, #{entity.createdBy}, #{entity.createdTime}, #{entity.updateBy},
+            #{entity.updateTime}, #{entity.isDeleted})
         </foreach>
     </insert>
+
 
     <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
         insert into auth_role(role_name, role_key, created_by, created_time, update_by, update_time, is_deleted)
         values
         <foreach collection="entities" item="entity" separator=",">
-            (#{entity.roleName}, #{entity.roleKey}, #{entity.createdBy}, #{entity.createdTime}, #{entity.updateBy}, #{entity.updateTime}, #{entity.isDeleted})
+            (#{entity.roleName}, #{entity.roleKey}, #{entity.createdBy}, #{entity.createdTime}, #{entity.updateBy},
+            #{entity.updateTime}, #{entity.isDeleted})
         </foreach>
         on duplicate key update
         role_name = values(role_name),
@@ -147,6 +164,7 @@
         update_time = values(update_time),
         is_deleted = values(is_deleted)
     </insert>
+
 
     <!--通过主键修改数据-->
     <update id="update">

@@ -86,5 +86,6 @@ public interface AuthRoleDao {
      */
     AuthRole queryByCondition(AuthRole authRole);
 
+    List<AuthRole> queryByRoleList(@Param("list") List<Long> roleIdList);
 }
 

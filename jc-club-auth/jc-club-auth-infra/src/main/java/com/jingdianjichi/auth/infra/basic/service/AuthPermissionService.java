@@ -2,6 +2,8 @@ package com.jingdianjichi.auth.infra.basic.service;
 
 import com.jingdianjichi.auth.infra.basic.entity.AuthPermission;
 
+import java.util.List;
+
 /**
  * 权限表(AuthPermission)表服务接口
  *
@@ -42,4 +44,5 @@ public interface AuthPermissionService {
      */
     boolean deleteById(Long id);
 
+    List<AuthPermission> queryByRoleList(List<Long> roleIdList);
 }

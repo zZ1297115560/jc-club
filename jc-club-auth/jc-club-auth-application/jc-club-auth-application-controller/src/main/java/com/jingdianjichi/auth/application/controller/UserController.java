@@ -116,8 +116,10 @@ public class UserController {
     @RequestMapping("doLogin")
     public SaResult doLogin(String username, String password) {
         // 此处仅作模拟示例，真实项目需要从数据库中查询数据进行比对
+//        SaSecureUtil.rsaEncryptByPublic(publicKey, authUser.getPassword());
+//        password = SaSecureUtil.rsaDecryptByPrivate(privateKey, password);
         if("zhang".equals(username) && "123456".equals(password)) {
-            StpUtil.login(10001);
+            StpUtil.login("鸡翅");
             SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
             return SaResult.data(tokenInfo);
 

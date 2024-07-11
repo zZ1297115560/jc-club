@@ -2,6 +2,8 @@ package com.jingdianjichi.auth.infra.basic.service;
 
 import com.jingdianjichi.auth.infra.basic.entity.AuthRole;
 
+import java.util.List;
+
 /**
  * 角色表(AuthRole)表服务接口
  *
@@ -46,4 +48,6 @@ public interface AuthRoleService {
      * 根据条件查询角色
      */
     AuthRole queryByCondition(AuthRole authRole);
+
+    List<AuthRole> queryByRoleList(List<Long> roleIdList);
 }
