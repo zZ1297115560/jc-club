@@ -6,13 +6,18 @@
  */
 package com.jingdianjichi.subject.common.entity;
 
+import lombok.Data;
+
+import java.io.Serializable;
+
 /**
  * 分页请求实体
  * @author zxf
  * @date 2024/6/24 14:02
  * @version 1.0
  */
-public class PageInfo {
+@Data
+public class PageInfo  implements Serializable {
     private Integer pageNo = 1;
 
     private Integer pageSize = 20;

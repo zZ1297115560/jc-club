@@ -6,7 +6,7 @@ import javax.annotation.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-07-11T23:18:38+0800",
+    date = "2024-07-13T14:41:23+0800",
     comments = "version: 1.4.2.Final, compiler: javac, environment: Java 1.8.0_211 (Oracle Corporation)"
 )
 public class AuthUserBOConverterImpl implements AuthUserBOConverter {
@@ -32,5 +32,28 @@ public class AuthUserBOConverterImpl implements AuthUserBOConverter {
         authUser.setExtJson( authUserBO.getExtJson() );
 
         return authUser;
+    }
+
+    @Override
+    public AuthUserBO convertEntityToBO(AuthUser authUser) {
+        if ( authUser == null ) {
+            return null;
+        }
+
+        AuthUserBO authUserBO = new AuthUserBO();
+
+        authUserBO.setId( authUser.getId() );
+        authUserBO.setUserName( authUser.getUserName() );
+        authUserBO.setNickName( authUser.getNickName() );
+        authUserBO.setEmail( authUser.getEmail() );
+        authUserBO.setPhone( authUser.getPhone() );
+        authUserBO.setPassword( authUser.getPassword() );
+        authUserBO.setSex( authUser.getSex() );
+        authUserBO.setAvatar( authUser.getAvatar() );
+        authUserBO.setStatus( authUser.getStatus() );
+        authUserBO.setIntroduce( authUser.getIntroduce() );
+        authUserBO.setExtJson( authUser.getExtJson() );
+
+        return authUserBO;
     }
 }

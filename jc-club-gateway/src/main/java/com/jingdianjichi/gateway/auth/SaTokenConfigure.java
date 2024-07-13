@@ -37,7 +37,7 @@ public class SaTokenConfigure {
                     SaRouter.match("/subject/**",r->StpUtil.checkLogin());
 
                     // 权限认证 -- 不同模块, 校验不同权限
-                    SaRouter.match("/auth/**","/auth/user/doLogin",r->StpUtil.checkRole("admin"));
+//                    SaRouter.match("/auth/**","/auth/user/doLogin",r->StpUtil.checkRole("admin"));
                     SaRouter.match("/subject/subject/add",r->StpUtil.checkPermission("subject.add"));
                 })
                 // 异常处理方法：每次setAuth函数出现异常时进入

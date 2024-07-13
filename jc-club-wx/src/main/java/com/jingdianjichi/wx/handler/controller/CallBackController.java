@@ -4,7 +4,7 @@
  * @className com.jingdianjichi.wx.controller.CallBackController
  * @copyright Copyright 2020 Thunisoft, Inc All rights reserved.
  */
-package com.jingdianjichi.wx.controller;
+package com.jingdianjichi.wx.handler.controller;
 
 import com.jingdianjichi.wx.handler.WxChatMsgFactory;
 import com.jingdianjichi.wx.handler.WxChatMsgHandler;

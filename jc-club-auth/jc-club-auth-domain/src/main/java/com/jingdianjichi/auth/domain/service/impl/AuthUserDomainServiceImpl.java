@@ -7,6 +7,8 @@
 package com.jingdianjichi.auth.domain.service.impl;
 
 import cn.dev33.satoken.secure.SaSecureUtil;
+import cn.dev33.satoken.stp.SaTokenInfo;
+import cn.dev33.satoken.stp.StpUtil;
 import com.google.gson.Gson;
 import com.jingdianjichi.auth.common.enums.AuthUserStatusEnum;
 import com.jingdianjichi.auth.common.enums.IsDeletedFlagEnum;
@@ -18,9 +20,11 @@ import com.jingdianjichi.auth.domain.service.AuthUserDomainService;
 import com.jingdianjichi.auth.infra.basic.entity.*;
 import com.jingdianjichi.auth.infra.basic.service.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.LinkedList;
@@ -46,6 +50,8 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
     @Resource
     private AuthUserRoleService authUserRoleService;
 
+    private static final String LOGIN_PREFIX = "loginCode";
+
     @Value("${rsa.publicKey}")
     private String publicKey;
 
@@ -68,10 +74,23 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
     @Transactional(rollbackFor = Exception.class)
     public Boolean register(AuthUserBO authUserBO) {
 
+        //校验用户是否存在
+        AuthUser existAuthUser = new AuthUser();
+        existAuthUser.setUserName(authUserBO.getUserName());
+        List<AuthUser> existUser = authUserService.queryByCondition(existAuthUser);
+        if (existUser.size() > 0) {
+            return true;
+        }
+
+
         AuthUser authUser = AuthUserBOConverter.INSTANCE.convertBOToEntity(authUserBO);
         authUser.setStatus(AuthUserStatusEnum.OPEN.getCode());
         authUser.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
-        authUser.setPassword(SaSecureUtil.rsaEncryptByPublic(publicKey, authUser.getPassword()));
+
+        if (StringUtils.isNotBlank(authUser.getPassword())) {
+            authUser.setPassword(SaSecureUtil.rsaEncryptByPublic(publicKey, authUser.getPassword()));
+        }
+
         Integer count = authUserService.insert(authUser);
         //建立一个初步的角色的关联
         AuthRole authRole = new AuthRole();
@@ -107,6 +126,19 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
     }
 
     @Override
+    public AuthUserBO getUserInfo(AuthUserBO authUserBO) {
+        AuthUser authUser = new AuthUser();
+        authUser.setUserName(authUserBO.getUserName());
+        List<AuthUser> userList = authUserService.queryByCondition(authUser);
+        if(CollectionUtils.isEmpty(userList)){
+            return new AuthUserBO();
+        }
+        AuthUser user = userList.get(0);
+        return AuthUserBOConverter.INSTANCE.convertEntityToBO(user);
+    }
+
+
+    @Override
     public Boolean update(AuthUserBO authUserBO) {
         AuthUser authUser = AuthUserBOConverter.INSTANCE.convertBOToEntity(authUserBO);
         Integer count = authUserService.update(authUser);
@@ -123,5 +155,21 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
         //有任何的更新，都要与缓存进行同步的修改
         return count > 0;
     }
+
+    @Override
+    public SaTokenInfo doLogin(String validCode) {
+        String loginKey = redisUtil.buildKey(LOGIN_PREFIX, validCode);
+        String openId = redisUtil.get(loginKey);
+        if (StringUtils.isBlank(openId)) {
+            return null;
+        }
+        AuthUserBO authUserBO = new AuthUserBO();
+        authUserBO.setUserName(openId);
+        this.register(authUserBO);
+        StpUtil.login(openId);
+        SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
+        return tokenInfo;
+    }
+
 }
 

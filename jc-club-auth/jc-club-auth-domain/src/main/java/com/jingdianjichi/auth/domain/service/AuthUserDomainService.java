@@ -6,6 +6,7 @@
  */
 package com.jingdianjichi.auth.domain.service;
 
+import cn.dev33.satoken.stp.SaTokenInfo;
 import com.jingdianjichi.auth.domain.entity.AuthUserBO;
 
 /**
@@ -30,5 +31,8 @@ public interface AuthUserDomainService {
      */
     Boolean delete(AuthUserBO authUserBO);
 
+    SaTokenInfo doLogin(String validCode);
+
+    AuthUserBO getUserInfo(AuthUserBO authUserBO);
 }
 

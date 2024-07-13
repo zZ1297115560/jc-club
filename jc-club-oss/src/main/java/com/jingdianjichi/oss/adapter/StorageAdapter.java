@@ -80,6 +80,8 @@ public interface StorageAdapter {
      * @param objectName 文件的名称
      */
     void deleteFile(String bucketName, String objectName);
+
+    public String getUrl(String bucket, String objectName);
 }
 
 

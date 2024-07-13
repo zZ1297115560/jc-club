@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 public class ReceiveTextMsgHandler implements WxChatMsgHandler {
 
     private static final String KEY_WORD = "验证码";
+    private static final String LOGIN_PREFIX = "loginCode";
 
     @Resource
     private RedisUtil redisUtil;
@@ -47,9 +48,9 @@ public class ReceiveTextMsgHandler implements WxChatMsgHandler {
 
         Random random = new Random();
         int num = random.nextInt(1000);
-        String numKey = redisUtil.buildKey(fromUserName, String.valueOf(num));
-        redisUtil.setNx(numKey, "1", 5L, TimeUnit.MINUTES);
-        String numContent = "您当前的验证码是：" + num + "5分钟内有效";
+        String numKey = redisUtil.buildKey(LOGIN_PREFIX, String.valueOf(num));
+        redisUtil.setNx(numKey, fromUserName, 5L, TimeUnit.MINUTES);
+        String numContent = "您当前的验证码是：" + num + "！ 5分钟内有效";
         String replyContent = "<xml>\n" +
                 "  <ToUserName><![CDATA[" + fromUserName + "]]></ToUserName>\n" +
                 "  <FromUserName><![CDATA[" + toUserName + "]]></FromUserName>\n" +
