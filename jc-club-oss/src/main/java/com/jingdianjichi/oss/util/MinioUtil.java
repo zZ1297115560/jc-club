@@ -64,7 +64,7 @@ public class MinioUtil {
                     .builder()
                     .bucket(bucketName)
                     .object(objectName)
-                    .stream(inputStream,-1,Integer.MAX_VALUE)
+                    .stream(inputStream,-1,5242889L)
                     .build());
         } catch (Exception e) {
             throw new RuntimeException("上传文件失败", e);
