@@ -3,7 +3,7 @@ package com.jingdianjichi.subject.domain.entity;
 import lombok.Data;
 
 import java.io.Serializable;
-
+import java.util.List;
 
 
 /**
@@ -39,6 +39,10 @@ public class SubjectCategoryBO implements Serializable {
      * 数量
      */
     private Integer count;
+    /**
+     * 标签bo数量
+     */
+    private List<SubjectLabelBO> labelBOList;
 
 }
 

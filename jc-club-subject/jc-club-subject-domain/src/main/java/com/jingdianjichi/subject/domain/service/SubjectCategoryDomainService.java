@@ -40,6 +40,10 @@ public interface SubjectCategoryDomainService {
      * @return
      */
     Boolean delete(SubjectCategoryBO subjectCategoryBO);
+    /**
+     * 查询分类及标签
+     */
+    List<SubjectCategoryBO> queryCategoryAndLabel(SubjectCategoryBO subjectCategoryBO);
 
 }
 
