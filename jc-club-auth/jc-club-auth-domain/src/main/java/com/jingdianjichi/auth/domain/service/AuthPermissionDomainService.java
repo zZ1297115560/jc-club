@@ -8,6 +8,8 @@ package com.jingdianjichi.auth.domain.service;
 
 import com.jingdianjichi.auth.domain.entity.AuthPermissionBO;
 
+import java.util.List;
+
 /**
  * AuthPermissionDomainService
  * @author zxf
@@ -22,4 +24,5 @@ public interface AuthPermissionDomainService {
 
     Boolean delete(AuthPermissionBO authPermissionBO);
 
+    List<String> getPermission(String userName);
 }
