@@ -77,6 +77,6 @@ public interface AuthUserDao {
      * @return 影响行数
      */
     int deleteById(Long id);
-
+    Integer updateByUserName(AuthUser authUser);
 }
 

@@ -9,6 +9,7 @@ package com.jingdianjichi.oss.adapter;
 import com.jingdianjichi.oss.entity.FileInfo;
 import com.jingdianjichi.oss.util.MinioUtil;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
