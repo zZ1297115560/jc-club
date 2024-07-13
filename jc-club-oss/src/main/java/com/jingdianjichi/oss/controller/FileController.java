@@ -6,6 +6,7 @@
  */
 package com.jingdianjichi.oss.controller;
 
+import com.jingdianjichi.oss.entity.Result;
 import com.jingdianjichi.oss.service.FileService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,10 +54,11 @@ public class FileController {
      * 上传文件
      */
     @RequestMapping("/upload")
-    public String upload(MultipartFile uploadFile, String bucket, String objectName) throws Exception {
-        objectName = objectName + "/" + uploadFile.getOriginalFilename();
-        return fileService.uploadFile(uploadFile, bucket, objectName);
+    public Result upload(MultipartFile uploadFile, String bucket, String objectName) throws Exception {
+        String url = fileService.uploadFile(uploadFile, bucket, objectName);
+        return Result.ok(url);
     }
+
 
 }
 
