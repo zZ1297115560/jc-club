@@ -6,7 +6,7 @@ spring:
       routes:
         # oss服务
         - id: oss
-          uri: lb://jc-club-oss
+          uri: lb://jc-club-oss-dev
           predicates:
             - Path=/oss/**
           filters:
@@ -14,7 +14,7 @@ spring:
 
         # auth服务
         - id: auth
-          uri: lb://jc-club-auth
+          uri: lb://jc-club-auth-dev
           predicates:
             - Path=/auth/**
           filters:
@@ -22,7 +22,7 @@ spring:
 
         # subject服务
         - id: subject
-          uri: lb://jc-club-subject
+          uri: lb://jc-club-subject-dev
           predicates:
             - Path=/subject/**
           filters:
