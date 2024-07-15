@@ -90,6 +90,9 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
         if (StringUtils.isNotBlank(authUser.getPassword())) {
             authUser.setPassword(SaSecureUtil.rsaEncryptByPublic(publicKey, authUser.getPassword()));
         }
+        if (StringUtils.isBlank(authUser.getAvatar())) {
+            authUser.setAvatar("http://117.72.73.25:9000/user/icon/微信图片_20231203153718.png");
+        }
 
         Integer count = authUserService.insert(authUser);
         //建立一个初步的角色的关联
