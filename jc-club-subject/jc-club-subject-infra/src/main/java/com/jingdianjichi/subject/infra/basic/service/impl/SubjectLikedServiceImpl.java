@@ -100,6 +100,15 @@ public class SubjectLikedServiceImpl implements SubjectLikedService {
     public void batchInsert(List<SubjectLiked> subjectLikedList) {
         this.subjectLikedDao.insertBatch(subjectLikedList);
     }
+    @Override
+    public int countByCondition(SubjectLiked subjectLiked) {
+        return this.subjectLikedDao.countByCondition(subjectLiked);
+    }
+
+    @Override
+    public List<SubjectLiked> queryPage(SubjectLiked subjectLiked, int start, Integer pageSize) {
+        return this.subjectLikedDao.queryPage(subjectLiked, start, pageSize);
+    }
 
 }
 

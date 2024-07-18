@@ -6,6 +6,7 @@
  */
 package com.jingdianjichi.subject.domain.service;
 
+import com.jingdianjichi.subject.common.entity.PageResult;
 import com.jingdianjichi.subject.domain.entity.SubjectLikedBO;
 
 /**
@@ -43,7 +44,7 @@ public interface SubjectLikedDomainService {
      * 同步点赞数据
      */
     void syncLiked();
-
+    PageResult<SubjectLikedBO> getSubjectLikedPage(SubjectLikedBO subjectLikedBO);
 }
 
 

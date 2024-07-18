@@ -11,6 +11,8 @@ import com.jingdianjichi.subject.infra.basic.entity.SubjectLiked;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 /**
  * SubjectLikedBOConverter
  * @author zxf
@@ -24,6 +26,7 @@ public interface SubjectLikedBOConverter {
 
     SubjectLiked convertBOToEntity(SubjectLikedBO subjectLikedBO);
 
+    List<SubjectLikedBO> convertListInfoToBO(List<SubjectLiked> subjectLikedList);
 }
 
 
