@@ -26,7 +26,7 @@ public interface SubjectInfoDomainService {
      * @param subjectLabelBO 标签信息
      * @return 是否新增成功
      */
-    Boolean add(SubjectInfoBO subjectInfoBO);
+    void add(SubjectInfoBO subjectInfoBO);
 
     /**
      * 分页查询题目

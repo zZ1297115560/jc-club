@@ -10,11 +10,13 @@ import com.alibaba.fastjson.JSON;
 import com.jingdianjichi.subject.common.entity.PageResult;
 import com.jingdianjichi.subject.common.enums.IsDeletedFlagEnum;
 import com.jingdianjichi.subject.common.util.IdWorkerUtil;
+import com.jingdianjichi.subject.common.util.LoginUtil;
 import com.jingdianjichi.subject.domain.convert.SubjectInfoConverter;
 import com.jingdianjichi.subject.domain.entity.SubjectInfoBO;
 import com.jingdianjichi.subject.domain.entity.SubjectOptionBO;
 import com.jingdianjichi.subject.domain.handler.subject.SubjectTypeHandler;
 import com.jingdianjichi.subject.domain.handler.subject.SubjectTypeHandlerFactory;
+import com.jingdianjichi.subject.domain.redis.RedisUtil;
 import com.jingdianjichi.subject.domain.service.SubjectInfoDomainService;
 import com.jingdianjichi.subject.infra.basic.entity.*;
 import com.jingdianjichi.subject.infra.basic.service.SubjectEsService;
@@ -23,15 +25,13 @@ import com.jingdianjichi.subject.infra.basic.service.SubjectLabelService;
 import com.jingdianjichi.subject.infra.basic.service.SubjectMappingService;
 import com.jingdianjichi.subject.infra.rpc.UserRpc;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -45,49 +45,45 @@ import java.util.stream.Collectors;
 public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
 
     @Resource
-    private SubjectLabelService subjectLabelService;
+    private SubjectInfoService subjectInfoService;
 
     @Resource
-    private SubjectInfoService subjectInfoService;
+    private SubjectMappingService subjectMappingService;
+
+    @Resource
+    private SubjectLabelService subjectLabelService;
 
     @Resource
     private SubjectTypeHandlerFactory subjectTypeHandlerFactory;
 
     @Resource
-    private SubjectMappingService subjectMappingService;
-    @Resource
     private SubjectEsService subjectEsService;
+
     @Resource
     private UserRpc userRpc;
 
+    @Resource
+    private RedisUtil redisUtil;
+
+    private static final String RANK_KEY = "subject_rank";
+
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean add(SubjectInfoBO subjectInfoBO) {
-        // 1. 日志： 打印入参
-        if (log.isInfoEnabled()){
-            log.info("SubjectInfoDomainServiceImpl.add.subjectLabelBO:{}", JSON.toJSONString(subjectInfoBO));
+    public void add(SubjectInfoBO subjectInfoBO) {
+        if (log.isInfoEnabled()) {
+            log.info("SubjectInfoDomainServiceImpl.add.bo:{}", JSON.toJSONString(subjectInfoBO));
         }
-
-        // 2. 转换BO对象为DO对象
         SubjectInfo subjectInfo = SubjectInfoConverter.INSTANCE.convertBoToEntity(subjectInfoBO);
-
-        // 3. 新增题目信息，并将新增的题目id设置到BO对象中
         subjectInfo.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
-        // 3.1 新增题目信息,会返回主键id
         subjectInfoService.insert(subjectInfo);
-        // 3.2 将新增的题目id设置到BO对象中
-        subjectInfoBO.setId(subjectInfo.getId());
-
-        // 4. 根据题目类型，调用不同的处理器，新增题目答案信息
         SubjectTypeHandler handler = subjectTypeHandlerFactory.getHandler(subjectInfo.getSubjectType());
+        subjectInfoBO.setId(subjectInfo.getId());
         handler.add(subjectInfoBO);
-
-        // 5. 新增题目与标签的关联关系
         List<Integer> categoryIds = subjectInfoBO.getCategoryIds();
         List<Integer> labelIds = subjectInfoBO.getLabelIds();
         List<SubjectMapping> mappingList = new LinkedList<>();
-        categoryIds.forEach(categoryId->{
-            labelIds.forEach(labelId->{
+        categoryIds.forEach(categoryId -> {
+            labelIds.forEach(labelId -> {
                 SubjectMapping subjectMapping = new SubjectMapping();
                 subjectMapping.setSubjectId(subjectInfo.getId());
                 subjectMapping.setCategoryId(Long.valueOf(categoryId));
@@ -107,9 +103,54 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
         subjectInfoEs.setSubjectName(subjectInfo.getSubjectName());
         subjectInfoEs.setSubjectType(subjectInfo.getSubjectType());
         subjectEsService.insert(subjectInfoEs);
+        //redis放入zadd计入排行榜
+        redisUtil.addScore(RANK_KEY, LoginUtil.getLoginId(), 1);
+    }
 
-        // 4. 返回结果
-        return null;
+    @Override
+    public PageResult<SubjectInfoBO> getSubjectPage(SubjectInfoBO subjectInfoBO) {
+        PageResult<SubjectInfoBO> pageResult = new PageResult<>();
+        pageResult.setPageNo(subjectInfoBO.getPageNo());
+        pageResult.setPageSize(subjectInfoBO.getPageSize());
+        int start = (subjectInfoBO.getPageNo() - 1) * subjectInfoBO.getPageSize();
+        SubjectInfo subjectInfo = SubjectInfoConverter.INSTANCE.convertBoToEntity(subjectInfoBO);
+        int count = subjectInfoService.countByCondition(subjectInfo, subjectInfoBO.getCategoryId()
+                , subjectInfoBO.getLabelId());
+        if (count == 0) {
+            return pageResult;
+        }
+        List<SubjectInfo> subjectInfoList = subjectInfoService.queryPage(subjectInfo, subjectInfoBO.getCategoryId()
+                , subjectInfoBO.getLabelIds(), start, subjectInfoBO.getPageSize());
+        List<SubjectInfoBO> subjectInfoBOS = SubjectInfoConverter.INSTANCE.convertEntityListToBoList(subjectInfoList);
+        subjectInfoBOS.forEach(info -> {
+            SubjectMapping subjectMapping = new SubjectMapping();
+            subjectMapping.setSubjectId(info.getId());
+            List<SubjectMapping> mappingList = subjectMappingService.queryLabelId(subjectMapping);
+            List<Long> labelIds = mappingList.stream().map(SubjectMapping::getLabelId).collect(Collectors.toList());
+            List<SubjectLabel> labelList = subjectLabelService.batchQueryByIds(labelIds);
+            List<String> labelNames = labelList.stream().map(SubjectLabel::getLabelName).collect(Collectors.toList());
+            info.setLabelNames(labelNames);
+        });
+        pageResult.setRecords(subjectInfoBOS);
+        pageResult.setTotal(count);
+        return pageResult;
+    }
+
+    @Override
+    public SubjectInfoBO querySubjectInfo(SubjectInfoBO subjectInfoBO) {
+        SubjectInfo subjectInfo = subjectInfoService.queryById(subjectInfoBO.getId());
+        SubjectTypeHandler handler = subjectTypeHandlerFactory.getHandler(subjectInfo.getSubjectType());
+        SubjectOptionBO optionBO = handler.query(subjectInfo.getId().intValue());
+        SubjectInfoBO bo = SubjectInfoConverter.INSTANCE.convertOptionBoAndInfoToBo(optionBO, subjectInfo);
+        SubjectMapping subjectMapping = new SubjectMapping();
+        subjectMapping.setSubjectId(subjectInfo.getId());
+        subjectMapping.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
+        List<SubjectMapping> mappingList = subjectMappingService.queryLabelId(subjectMapping);
+        List<Long> labelIdList = mappingList.stream().map(SubjectMapping::getLabelId).collect(Collectors.toList());
+        List<SubjectLabel> labelList = subjectLabelService.batchQueryByIds(labelIdList);
+        List<String> labelNameList = labelList.stream().map(SubjectLabel::getLabelName).collect(Collectors.toList());
+        bo.setLabelNames(labelNameList);
+        return bo;
     }
 
     @Override
@@ -122,71 +163,26 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
     }
 
     @Override
-    public PageResult<SubjectInfoBO> getSubjectPage(SubjectInfoBO subjectInfoBO) {
-
-        PageResult<SubjectInfoBO> pageResult = new PageResult<>();
-        pageResult.setPageNo(subjectInfoBO.getPageNo());
-        pageResult.setPageSize(subjectInfoBO.getPageSize());
-        int start = (subjectInfoBO.getPageNo() - 1) * subjectInfoBO.getPageSize();
-        SubjectInfo subjectinfo = SubjectInfoConverter.INSTANCE.convertBoToEntity(subjectInfoBO);
-        int count = subjectInfoService.countByCondition(subjectinfo, subjectInfoBO.getCategoryId(),subjectInfoBO.getLabelId());
-        if (count == 0){
-            return pageResult;
-        }
-
-        List<SubjectInfo> subjectInfoList = subjectInfoService.queryPage(subjectinfo, subjectInfoBO.getCategoryId(),subjectInfoBO.getLabelIds(),
-                start,subjectInfoBO.getPageSize());
-        List<SubjectInfoBO> subjectInfoBOList = SubjectInfoConverter.INSTANCE.convertEntityListToBoList(subjectInfoList);
-        pageResult.setRecords(subjectInfoBOList);
-        pageResult.setTotal(count);
-        return pageResult;
-
-    }
-
-    @Override
-    public SubjectInfoBO querySubjectInfo(SubjectInfoBO subjectInfoBO) {
-        SubjectInfo subjectInfo = subjectInfoService.queryById(subjectInfoBO.getId());
-        if (subjectInfo == null){
-            if (log.isInfoEnabled()){
-                log.info("SubjectInfoDomainServiceImpl.querySubjectInfo.subjectInfo is null,subjectInfoBO:{}", JSON.toJSONString(subjectInfoBO));
-            }
-            return null;
-        }
-        Integer subjectType = subjectInfo.getSubjectType();
-        SubjectTypeHandler handler = subjectTypeHandlerFactory.getHandler(subjectType);
-        SubjectOptionBO optionBO = handler.query(subjectInfo.getId().intValue());
-        SubjectInfoBO subjectInfoBO1 = SubjectInfoConverter.INSTANCE.convertOptionBoAndInfoToBo(optionBO,subjectInfo);
-
-        // 查询labelName
-        SubjectMapping subjectMapping = new SubjectMapping();
-        subjectMapping.setSubjectId(subjectInfoBO.getId());
-        subjectMapping.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
-        List<SubjectMapping> mappingList = subjectMappingService.queryLabelId(subjectMapping);
-        List<Long> LabelIdList = mappingList.stream().map(SubjectMapping::getLabelId).collect(Collectors.toList());
-        List<SubjectLabel> subjectLabelList = subjectLabelService.batchQueryByIds(LabelIdList);
-        List<String> labelNameList = subjectLabelList.stream().map(SubjectLabel::getLabelName).collect(Collectors.toList());
-
-        subjectInfoBO1.setLabelNames(labelNameList);
-        return subjectInfoBO1;
-    }
-
-    @Override
     public List<SubjectInfoBO> getContributeList() {
-        List<SubjectInfo> subjectInfoList = subjectInfoService.getContributeCount();
-        if (CollectionUtils.isEmpty(subjectInfoList)) {
+        Set<ZSetOperations.TypedTuple<String>> typedTuples = redisUtil.rankWithScore(RANK_KEY, 0, 5);
+        if (log.isInfoEnabled()) {
+            log.info("getContributeList.typedTuples:{}", JSON.toJSONString(typedTuples));
+        }
+        if (CollectionUtils.isEmpty(typedTuples)) {
             return Collections.emptyList();
         }
         List<SubjectInfoBO> boList = new LinkedList<>();
-        subjectInfoList.forEach((subjectInfo -> {
+        typedTuples.forEach((rank -> {
             SubjectInfoBO subjectInfoBO = new SubjectInfoBO();
-            subjectInfoBO.setSubjectCount(subjectInfo.getSubjectCount());
-            UserInfo userInfo = userRpc.getUserInfo(subjectInfo.getCreatedBy());
+            subjectInfoBO.setSubjectCount(rank.getScore().intValue());
+            UserInfo userInfo = userRpc.getUserInfo(rank.getValue());
             subjectInfoBO.setCreateUser(userInfo.getNickName());
             subjectInfoBO.setCreateUserAvatar(userInfo.getAvatar());
             boList.add(subjectInfoBO);
         }));
         return boList;
     }
+
 
 }
 
