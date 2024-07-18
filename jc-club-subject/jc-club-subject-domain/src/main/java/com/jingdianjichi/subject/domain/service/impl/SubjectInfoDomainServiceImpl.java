@@ -18,6 +18,7 @@ import com.jingdianjichi.subject.domain.handler.subject.SubjectTypeHandler;
 import com.jingdianjichi.subject.domain.handler.subject.SubjectTypeHandlerFactory;
 import com.jingdianjichi.subject.domain.redis.RedisUtil;
 import com.jingdianjichi.subject.domain.service.SubjectInfoDomainService;
+import com.jingdianjichi.subject.domain.service.SubjectLikedDomainService;
 import com.jingdianjichi.subject.infra.basic.entity.*;
 import com.jingdianjichi.subject.infra.basic.service.SubjectEsService;
 import com.jingdianjichi.subject.infra.basic.service.SubjectInfoService;
@@ -58,6 +59,9 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
 
     @Resource
     private SubjectEsService subjectEsService;
+
+    @Resource
+    private SubjectLikedDomainService subjectLikedDomainService;
 
     @Resource
     private UserRpc userRpc;
@@ -150,6 +154,8 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
         List<SubjectLabel> labelList = subjectLabelService.batchQueryByIds(labelIdList);
         List<String> labelNameList = labelList.stream().map(SubjectLabel::getLabelName).collect(Collectors.toList());
         bo.setLabelNames(labelNameList);
+        bo.setLiked(subjectLikedDomainService.isLiked(subjectInfoBO.getId().toString(), LoginUtil.getLoginId()));
+        bo.setLikedCount(subjectLikedDomainService.getLikedCount(subjectInfoBO.getId().toString()));
         return bo;
     }
 
