@@ -97,7 +97,7 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
         subjectMappingService.batchInsert(mappingList);
         //同步到es
         SubjectInfoEs subjectInfoEs = new SubjectInfoEs();
-        subjectInfoEs.setDocId(new IdWorkerUtil(1,1,1).nextId());
+        subjectInfoEs.setDocId(new IdWorkerUtil(1, 1, 1).nextId());
         subjectInfoEs.setSubjectId(subjectInfo.getId());
         subjectInfoEs.setSubjectAnswer(subjectInfoBO.getSubjectAnswer());
         subjectInfoEs.setCreateTime(new Date().getTime());
@@ -108,6 +108,15 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
 
         // 4. 返回结果
         return null;
+    }
+
+    @Override
+    public PageResult<SubjectInfoEs> getSubjectPageBySearch(SubjectInfoBO subjectInfoBO) {
+        SubjectInfoEs subjectInfoEs = new SubjectInfoEs();
+        subjectInfoEs.setPageNo(subjectInfoBO.getPageNo());
+        subjectInfoEs.setPageSize(subjectInfoBO.getPageSize());
+        subjectInfoEs.setKeyWord(subjectInfoBO.getKeyWord());
+        return subjectEsService.querySubjectList(subjectInfoEs);
     }
 
     @Override

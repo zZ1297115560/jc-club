@@ -8,6 +8,7 @@ package com.jingdianjichi.subject.domain.service;
 
 import com.jingdianjichi.subject.common.entity.PageResult;
 import com.jingdianjichi.subject.domain.entity.SubjectInfoBO;
+import com.jingdianjichi.subject.infra.basic.entity.SubjectInfoEs;
 
 
 /**
@@ -38,5 +39,11 @@ public interface SubjectInfoDomainService {
      * @return 题目信息
      */
     SubjectInfoBO querySubjectInfo(SubjectInfoBO subjectInfoBO);
+
+    /**
+     * 全文检索
+     */
+    PageResult<SubjectInfoEs> getSubjectPageBySearch(SubjectInfoBO subjectInfoBO);
+
 }
 
