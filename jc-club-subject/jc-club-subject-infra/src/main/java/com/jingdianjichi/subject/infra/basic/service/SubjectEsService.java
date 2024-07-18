@@ -6,6 +6,9 @@
  */
 package com.jingdianjichi.subject.infra.basic.service;
 
+import com.jingdianjichi.subject.common.entity.PageResult;
+import com.jingdianjichi.subject.infra.basic.entity.SubjectInfoEs;
+
 /**
  * SubjectEsService
  * @author zxf
@@ -13,6 +16,9 @@ package com.jingdianjichi.subject.infra.basic.service;
  * @version 1.0
  */
 public interface SubjectEsService {
+    boolean insert(SubjectInfoEs subjectInfoEs);
+
+    PageResult<SubjectInfoEs> querySubjectList(SubjectInfoEs subjectInfoEs);
 
 }
 
