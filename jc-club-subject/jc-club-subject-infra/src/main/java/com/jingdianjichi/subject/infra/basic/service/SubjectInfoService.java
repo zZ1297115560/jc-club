@@ -64,4 +64,6 @@ public interface SubjectInfoService {
      * @return 符合条件的题目信息
      */
     List<SubjectInfo> queryPage(SubjectInfo subjectInfo, Integer categoryId, List<Integer> labelIds, int start, Integer pageSize);
+
+    List<SubjectInfo> getContributeCount();
 }

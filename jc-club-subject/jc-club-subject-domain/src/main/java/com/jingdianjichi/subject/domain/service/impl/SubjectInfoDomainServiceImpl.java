@@ -16,19 +16,19 @@ import com.jingdianjichi.subject.domain.entity.SubjectOptionBO;
 import com.jingdianjichi.subject.domain.handler.subject.SubjectTypeHandler;
 import com.jingdianjichi.subject.domain.handler.subject.SubjectTypeHandlerFactory;
 import com.jingdianjichi.subject.domain.service.SubjectInfoDomainService;
-import com.jingdianjichi.subject.infra.basic.entity.SubjectInfo;
-import com.jingdianjichi.subject.infra.basic.entity.SubjectInfoEs;
-import com.jingdianjichi.subject.infra.basic.entity.SubjectLabel;
-import com.jingdianjichi.subject.infra.basic.entity.SubjectMapping;
+import com.jingdianjichi.subject.infra.basic.entity.*;
 import com.jingdianjichi.subject.infra.basic.service.SubjectEsService;
 import com.jingdianjichi.subject.infra.basic.service.SubjectInfoService;
 import com.jingdianjichi.subject.infra.basic.service.SubjectLabelService;
 import com.jingdianjichi.subject.infra.basic.service.SubjectMappingService;
+import com.jingdianjichi.subject.infra.rpc.UserRpc;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -57,6 +57,8 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
     private SubjectMappingService subjectMappingService;
     @Resource
     private SubjectEsService subjectEsService;
+    @Resource
+    private UserRpc userRpc;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -167,5 +169,24 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
         subjectInfoBO1.setLabelNames(labelNameList);
         return subjectInfoBO1;
     }
+
+    @Override
+    public List<SubjectInfoBO> getContributeList() {
+        List<SubjectInfo> subjectInfoList = subjectInfoService.getContributeCount();
+        if (CollectionUtils.isEmpty(subjectInfoList)) {
+            return Collections.emptyList();
+        }
+        List<SubjectInfoBO> boList = new LinkedList<>();
+        subjectInfoList.forEach((subjectInfo -> {
+            SubjectInfoBO subjectInfoBO = new SubjectInfoBO();
+            subjectInfoBO.setSubjectCount(subjectInfo.getSubjectCount());
+            UserInfo userInfo = userRpc.getUserInfo(subjectInfo.getCreatedBy());
+            subjectInfoBO.setCreateUser(userInfo.getNickName());
+            subjectInfoBO.setCreateUserAvatar(userInfo.getAvatar());
+            boList.add(subjectInfoBO);
+        }));
+        return boList;
+    }
+
 }
 

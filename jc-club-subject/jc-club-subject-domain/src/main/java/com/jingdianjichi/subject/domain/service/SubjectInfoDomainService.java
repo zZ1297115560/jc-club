@@ -10,6 +10,8 @@ import com.jingdianjichi.subject.common.entity.PageResult;
 import com.jingdianjichi.subject.domain.entity.SubjectInfoBO;
 import com.jingdianjichi.subject.infra.basic.entity.SubjectInfoEs;
 
+import java.util.List;
+
 
 /**
  * 标签服务接口
@@ -45,5 +47,6 @@ public interface SubjectInfoDomainService {
      */
     PageResult<SubjectInfoEs> getSubjectPageBySearch(SubjectInfoBO subjectInfoBO);
 
+    List<SubjectInfoBO> getContributeList();
 }
 

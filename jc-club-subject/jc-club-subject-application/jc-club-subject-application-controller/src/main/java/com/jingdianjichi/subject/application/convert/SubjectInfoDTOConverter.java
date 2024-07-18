@@ -11,6 +11,8 @@ import com.jingdianjichi.subject.domain.entity.SubjectInfoBO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 /**
  * SubjectCategoryDToConverter
  * @author zxf
@@ -37,5 +39,7 @@ public interface SubjectInfoDTOConverter {
      * @return
      */
     SubjectInfoDTO convertBoToDto(SubjectInfoBO subjectInfoBO);
+
+    List<SubjectInfoDTO> convertBOToDTOList(List<SubjectInfoBO> subjectInfoBO);
 }
 
