@@ -8,6 +8,8 @@ package com.jingdianjichi.subject.infra.basic.service;
 
 import com.jingdianjichi.subject.infra.basic.entity.SubjectLiked;
 
+import java.util.List;
+
 /**
  * SubjectLikedService
  * @author zxf
@@ -52,7 +54,7 @@ public interface SubjectLikedService {
      * 根据条件查询角色
      */
     SubjectLiked queryByCondition(SubjectLiked subjectLiked);
-
+    void batchInsert(List<SubjectLiked> subjectLikedList);
 }
 
 
