@@ -4,7 +4,7 @@
  * @className com.jingdianjichi.subject.application.context.LoginContextHolder
  * @copyright Copyright 2020 Thunisoft, Inc All rights reserved.
  */
-package com.jingdianjichi.subject.application.context;
+package com.jingdianjichi.subject.common.context;
 
 import java.util.Map;
 import java.util.Objects;

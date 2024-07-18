@@ -4,9 +4,9 @@
  * @className com.jingdianjichi.subject.application.util.LoginUtil
  * @copyright Copyright 2020 Thunisoft, Inc All rights reserved.
  */
-package com.jingdianjichi.subject.application.util;
+package com.jingdianjichi.subject.common.util;
 
-import com.jingdianjichi.subject.application.context.LoginContextHolder;
+import com.jingdianjichi.subject.common.context.LoginContextHolder;
 
 /**
  * LoginUtil
